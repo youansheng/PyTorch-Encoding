@@ -45,8 +45,8 @@ def main():
         torch.cuda.manual_seed(args.seed)
     # init dataloader
     dataset = importlib.import_module('dataset.'+args.dataset)
-    Dataloder = dataset.Dataloder
-    train_loader, test_loader = Dataloder(args).getloader()
+    Dataloader = dataset.Dataloader
+    train_loader, test_loader = Dataloader(args).getloader()
     # init the model
     models = importlib.import_module('model.'+args.model)
     model = models.Net(args)
@@ -76,7 +76,8 @@ def main():
         else:
             raise RuntimeError ("=> no resume checkpoint found at '{}'".\
                 format(args.resume))
-    scheduler = LR_Scheduler(args, len(train_loader))
+    scheduler = LR_Scheduler(args.lr_scheduler, args.lr, args.epochs,
+                             len(train_loader), args.lr_step)
     def train(epoch):
         model.train()
         global best_pred, errlist_train
